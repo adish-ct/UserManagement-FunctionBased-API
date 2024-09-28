@@ -58,6 +58,16 @@ def update_profile(request):
 
 
 
+@login_required(login_url='/login')
+def delete_user(request):
+    if request.method == 'POST':
+        user = request.user
+        user.delete()
+        logout(request) 
+        return redirect('login') 
+    return redirect('profile')
+
+
 
 
 
