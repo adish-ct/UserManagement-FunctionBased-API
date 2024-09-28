@@ -1,9 +1,10 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.forms import AuthenticationForm
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 
-from accounts.forms import CustomUserCreationForm
+from accounts.forms import CustomUserCreationForm, CustomUserUpdateForm
 
 # Create your views here.
 
@@ -41,6 +42,19 @@ def login_view(request):
 
 
 
+@login_required(login_url='/login')
+def update_profile(request):
+    """
+    Update user profile.
+    """
+    user = request.user
+    if request.method == 'POST':
+        form = CustomUserUpdateForm(request.POST, request.FILES, instance=user)
+        if form.is_valid():
+            form.save()
+        return redirect('profile')
+    form = CustomUserUpdateForm(instance=user)
+    return render(request, 'profile.html', {'form': form})
 
 
 
